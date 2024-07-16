@@ -38,6 +38,18 @@ dracoLoader.setDecoderPath('https://threejs.org//examples/jsm/libs/draco/gltf/')
 const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
+
+function getURLQuery (url = location.href) {
+  const obj = {}
+  const reg = /([^?&=]+)=([^?&=]+)/g
+  let res = reg.exec(url)
+  while (res) {
+    obj[res[1]] = res[2]
+    res = reg.exec(url)
+  }
+  return obj
+}
+
 const App = {
   template:  /* html */ `
 
@@ -62,21 +74,22 @@ const App = {
 
   `,
   data () {
-    let audioBgm = new Audio('./assets/audio/1.mp3')
+    let audioName = getURLQuery().audio || 1
+    let audioBgm = new Audio(`./assets/audio/${audioName}.mp3`)
     this.audioBgm = audioBgm
     this.audio = new Audio()
     audioBgm.loop = this.audio.loop = true
 
-    let list = [
-      // { src: 'http://img.cgmodel.com/image/2017/0520/big/889027-1786208750.jpg', introMusic: './assets/audio/UNC Gate.mp3' },
-      { src: './assets/pano/2.jpg', introMusic: './assets/audio/1.mp3' },
-    ]
+    // let list = [
+    //   // { src: 'http://img.cgmodel.com/image/2017/0520/big/889027-1786208750.jpg', introMusic: './assets/audio/UNC Gate.mp3' },
+    //   { src: './assets/pano/2.jpg', introMusic: './assets/audio/1.mp3' },
+    // ]
     return {
       isMusic: 1,
       isRotation: 1,
       currScene: '',
       name: "",
-      list: list,
+      // list: list,
 
     }
   },
@@ -124,7 +137,7 @@ const App = {
     async loadData () {
       await this.$nextTick()
       // this.initSwiper()
-      this.change(0)
+      // this.change(0)
 
       let timer
       let handleAnimation = (event) => {
@@ -140,7 +153,7 @@ const App = {
       window.addEventListener("pointerdown", handleAnimation);
 
     },
- 
+
     change (index) {
       this.currScene = this.list[index]
       this.audio.src = this.currScene.introMusic
